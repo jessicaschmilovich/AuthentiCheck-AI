@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Voice Detector:</title>
+    <style>
+        body {
+            color: #0056b3;
+            font-family: 'Montserrat', sans-serif;
+        }
+        button {
+            color: #000000;
+        }
+        #start-button, button[onclick="stopListening()"] {
+            color: #000000;
+        }
+        div, p, h1, h2, h3, h4, h5, h6 {
+            color: #0056b3;
+        }
+        div#voice-detector-title {
+            font-size: 24px;
+        }
+        #microphone-status {
+            margin-bottom: 20px;
+        }
+        #label-container-voice {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div id="voice-detector-title">Voice Detector:</div>
+    <button type="button" id="start-button">Start</button>
+    <button type="button" onclick="stopListening()">End</button>
+    <div id="microphone-status">Microphone status: Not checked</div>
+    <div id="label-container-voice"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/speech-commands"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image"></script>
+
+    <script type="text/javascript">
+        let recognizer;
+
+        async function init() {
+            const microphoneStatus = document.getElementById("microphone-status");
+            microphoneStatus.innerHTML = "Verifying microphone access...";
+
+            try {
+                await navigator.mediaDevices.getUserMedia({ audio: true });
+                microphoneStatus.innerHTML = "Microphone access granted.<div style='margin-bottom: 20px;'></div>";
+
+                const modelURL = 'https://teachablemachine.withgoogle.com/models/ThLCWBdtN/model.json';
+                const metadataURL = 'https://teachablemachine.withgoogle.com/models/ThLCWBdtN/metadata.json';
+                recognizer = await speechCommands.create('BROWSER_FFT', null, modelURL, metadataURL);
+                await recognizer.ensureModelLoaded();
+
+                recognizer.listen(result => {
+                    const classLabels = recognizer.wordLabels();
+                    const labelContainerVoice = document.getElementById("label-container-voice");
+                    labelContainerVoice.innerHTML = "";
+                    for (let i = 0; i < classLabels.length; i++) {
+                        const score = result.scores[i] * 100;
+                        const classPrediction = classLabels[i] + ": " + score.toFixed(2) + "%<br>";
+                        labelContainerVoice.innerHTML += classPrediction;
+                    }
+                }, {
+                    includeSpectrogram: true,
+                    probabilityThreshold: 0.75,
+                    invokeCallbackOnNoiseAndUnknown: true,
+                    overlapFactor: 0
+                });
+            } catch (error) {
+                microphoneStatus.innerHTML = "Microphone access denied or not available.";
+                console.error("Could not initialize microphone", error);
+            }
+        }
+
+        function stopListening() {
+            if (recognizer) {
+                recognizer.stopListening();
+                const microphoneStatus = document.getElementById("microphone-status");
+                microphoneStatus.innerHTML = "Microphone listening stopped.<div style='margin-top: 20px;'></div>";
+            }
+        }
+
+        document.getElementById('start-button').addEventListener('click', init);
+    </script>
+</body>
+</html>

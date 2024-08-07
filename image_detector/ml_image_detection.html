@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Image Detector:</title>
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif; /* Change font to Montserrat */
+            background-color: #f4f4f4;
+            color: #333;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            display: inline-block;
+            text-align: left;
+            margin: 0 auto;
+        }
+
+        #upload-image {
+            padding: 10px 20px;
+            background-color: #adc8db; /* Sky blue background */
+            color: white; /* White text */
+            border: 2px solid #0056b3; /* Slightly lighter blue border */
+            border-radius: 5px;
+            cursor: pointer;
+            display: inline-block;
+            font-size: 16px;
+            margin-bottom: 10px; /* Add some space below the file input */
+            margin-top: 2%; /* Move 2% lower */
+        }
+
+        #upload-image:hover {
+            background-color: #00BFFF; /* Deeper blue on hover */
+        }
+
+        #predict-button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            display: block; /* Ensure the button is on a new line */
+            margin-top: 10px; /* Add space above the button */
+            margin-bottom: 20px; /* Space before the image container */
+        }
+
+        #predict-button:hover {
+            background-color: #0056b3;
+        }
+
+        #image-container img {
+            max-width: 300px;
+            max-height: 300px;
+        }
+
+        #label-container-image {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #0056b3; /* Change color to #0056b3 */
+        }
+
+        .logo-text {
+            font-size: 24px;
+            color: #0056b3;
+            margin-top: -2%;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="logo-text">Image Detector:</div>
+        <input type="file" id="upload-image" accept="image/*" onchange="handleImageUpload(event)" />
+        <button type="button" id="predict-button" onclick="triggerPrediction()">Classify</button>
+        <div id="image-container"></div>
+        <canvas id="prediction-canvas" style="display: none;"></canvas>
+        <div id="label-container-image"></div>
+    </div>
+
+    <script type="text/javascript">
+        const URL = "https://teachablemachine.withgoogle.com/models/Iq2r-2BMb/";
+        let model, labelContainerImage, maxPredictions;
+
+        async function init() {
+            const modelURL = URL + "model.json";
+            const metadataURL = URL + "metadata.json";
+
+            model = await tmImage.load(modelURL, metadataURL);
+            maxPredictions = model.getTotalClasses();
+
+            labelContainerImage = document.getElementById("label-container-image");
+            for (let i = 0; i < maxPredictions; i++) {
+                labelContainerImage.appendChild(document.createElement("div"));
+            }
+        }
+
+        function handleImageUpload(event) {
+            const file = event.target.files[0];
+            const reader = new FileReader();
+
+            reader.onload = (e) => {
+                const imageElement = new Image();
+                imageElement.src = e.target.result;
+
+                imageElement.onload = () => {
+                    const canvas = document.getElementById('prediction-canvas');
+                    const ctx = canvas.getContext('2d');
+                    canvas.width = imageElement.naturalWidth;
+                    canvas.height = imageElement.naturalHeight;
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    ctx.drawImage(imageElement, 0, 0, canvas.width, canvas.height);
+
+                    document.getElementById("image-container").innerHTML = '';
+                    document.getElementById("image-container").appendChild(imageElement);
+                };
+            };
+
+            reader.readAsDataURL(file);
+        }
+
+        async function triggerPrediction() {
+            const canvas = document.getElementById('prediction-canvas');
+            if (!canvas || canvas.width === 0 || canvas.height === 0) {
+                alert("Please wait for the image to load before predicting.");
+                return;
+            }
+            await predict(canvas);
+        }
+
+        async function predict(imageElement) {
+            const prediction = await model.predict(imageElement);
+            labelContainerImage.innerHTML = ''; // Clear previous predictions
+            for (let i = 0; i < maxPredictions; i++) {
+                const classPrediction =
+                    prediction[i].className + ": " + (prediction[i].probability * 100).toFixed(2) + "%";
+                const labelDiv = document.createElement("div");
+                labelDiv.innerHTML = classPrediction;
+                labelContainerImage.appendChild(labelDiv);
+            }
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>
