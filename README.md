@@ -16,7 +16,7 @@ AuthentiCheck AI is an advanced web platform designed to empower users, particul
 **Project Structure:**
 
 image_detector/  
-Contains resources for detecting AI-generated images.  
+Contains resources for detecting AI-generated images. 
 - ml_image_detection.html: Handles analyzing and identifying AI-generated image samples.
 
 text_detector/  
@@ -30,5 +30,5 @@ Handles the detection of AI-generated text using custom ML models.
 - pycache/: Directory for cached Python bytecode files.
 
 voice_detector/  
-Contains resources for detecting AI-generated voices.  
+Contains resources for detecting AI-generated voices.
 - ml_voice_detection.html: Handles analyzing and identifying AI-generated voice samples.
