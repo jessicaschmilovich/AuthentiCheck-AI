@@ -30,5 +30,5 @@ Handles the detection of AI-generated text using custom ML models.
 - pycache/: Directory for cached Python bytecode files.
 
 voice_detector/  
-Houses the voice detection tools.  
+Contains resources for detecting AI-generated voices.  
 - ml_voice_detection.html: Handles analyzing and identifying AI-generated voice samples.
