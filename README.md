@@ -8,7 +8,7 @@ AuthentiCheck AI is an advanced web platform designed to empower users, particul
    Analyzes images and provides a percentage likelihood of them being AI-generated.
 
 2. Text Detection  
-   Evaluates text for AI-generated characteristics and delivers a percentage likelihood through an interactive Replit webpage.
+   Evaluates text for AI-generated characteristics and delivers a percentage likelihood through an interactive Replit webpage linked to the main platform.
 
 3. Voice Detection  
    Analyzes voice samples and offers a percentage likelihood of AI generation based on acoustic and syntactic features.
