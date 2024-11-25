@@ -1,6 +1,6 @@
 # AuthentiCheck AI
 
-AuthentiCheck AI is an advanced web platform designed to empower users, particularly teenagers, to identify false AI-generated content in texts, images, and voices. By leveraging machine learning and custom models, the platform enhances digital literacy and promotes responsible online engagement by providing percentage likelihoods of AI generation. HTML structures the interface for the image and voice detectors, while Python is used for the text detector, with ReScript and Nix supporting text-related functionality and backend processes. This project earned me the title of international semifinalist in the 2023 Technovation Challenge.
+AuthentiCheck AI is an advanced web platform designed to empower users, particularly teenagers, to identify false AI-generated content in texts, images, and voices. By leveraging machine learning and custom models, the platform enhances digital literacy and promotes responsible online engagement by providing percentage likelihoods of AI generation. HTML structures the interface for the image and voice detectors, while Python is used for the text detector, with ReScript and Nix supporting text-related functionality and backend processes. This project earned me the title of international semifinalist in the 2024 Technovation Challenge.
 
 **Features:**
 
